@@ -2,11 +2,11 @@
     <el-container>
         <el-header><NavBar/></el-header>
         <el-container>
-            <el-aside width="300px"><UpLoad/></el-aside>
+            <el-aside width="300px"><UpLoad @func = "getUrlFromLoad" /></el-aside>
             <el-container>
                 <el-main>
                   <el-row>
-                    <el-button>处理视频</el-button>
+                    <el-button class = "process-btn" @click="processSubmit">处理视频</el-button>
                   </el-row>
                   <el-row>
                     <VedioPlay/>
@@ -23,7 +23,7 @@
 import NavBar from '@/components/NavBar.vue';
 import UpLoad from '@/components/UpLoad.vue';
 import VedioPlay from '@/components/VedioPlay.vue'
-
+import axios from "axios";
 
 export default {
     name:'BaseContainer',
@@ -31,6 +31,31 @@ export default {
       NavBar,
       UpLoad,
       VedioPlay,
+    },
+    data(){
+      return{
+
+      };
+    },
+    methods:{
+      processSubmit(){
+        console.log("正在进行post请求")
+        axios.post("http://localhost:8081/process",{
+          context:"processing",
+          url:"urltest",
+        }).then(function(res){
+          console.log(res.data);
+          console.log("给Vedioplay发送信息:");
+          this.$bus.$emit('getProcedUrl',res.data);
+        });
+      },
+
+      getUrlFromLoad(data){ // 从upload子组件中接收返回的url
+        console.log("接受来自子组件信息：");
+        
+        this.loadUrl = data;
+        console.log("返回的url:" + this.loadUrl);
+      },
     }
 }
 </script>
